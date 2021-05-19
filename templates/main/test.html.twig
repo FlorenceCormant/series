@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Tests ! </h1>
+
+
+    {# Création de variable #}
+    {% set name = "Sylvain" %}
+    <h2>{{ name }}</h2>
+
+    {# Création d'un tableau #}
+    {% set colors = ['blue', 'red', 'yellow', 'purple'] %}
+
+
+
+    {% for color in colors %}
+        {% if color != 'red' %}
+            <div>Index : {{ loop.index }}</div>
+            <div style="background-color: {{ color }}">{{ color }}</div>
+        {% endif %}
+
+        {# usage de loop #}
+        {% if loop.first %}
+            <div>Première itération</div>
+            <div>Nombres d'éléments : {{ loop.length }}</div>
+        {% endif %}
+
+        {% if loop.last %}
+            <div>Dernière itération</div>
+        {% endif %}
+
+    {% endfor %}
+
+
+    {# Création d'un objet #}
+    {% set book = {
+        title : "Mon livre",
+        year : 2021,
+        author : "John Doe"
+    } %}
+
+    <h2>{{ book.title }}</h2>
+    {% for key, val in book %}
+        <div>{{ key }} : {{ val }}</div>
+    {% endfor %}
+
+    {# Filtres #}
+    <h2>Quelques filtres</h2>
+    <div>{{ name|upper }}, {{ name|length }} lettres</div>
+    <div>{{ colors|length }} couleurs</div>
+    <div>Mon tableau : {{ colors|join("-") }}</div>
+    <div>{{ "now"|date('Y-m-d') }}</div>
+
+    {# affichage des variables du controller
+
+    <h3>Nom de l'utilisateur : {{ user }}</h3>
+    <h3>Nom de l'utilisateur : {{ user|raw }}</h3>
+    <h3>Nom de l'utilisateur : {{ user|striptags }}</h3>
+
+    <div>
+        Infos de la série :
+        <p>{{ serie.title }}</p>
+        <p>{{ serie.year }}</p>
+    </div>
+
+    #}
+{% endblock %}
+
+{% block title %}
+    {{ parent() }} | Test
+{% endblock %}
