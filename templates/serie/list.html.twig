@@ -7,17 +7,20 @@
     <h2>List of series</h2>
     <div class="flex_div flex_between">
         {% if currentPage > 1 %}
-            <a href="{{ path('serie_list', {'page' : currentPage - 1}) }}">Previous Page</a>
+            <a class="link_button" href="{{ path('serie_list', {'page' : currentPage - 1}) }}">Previous Page</a>
         {% endif %}
         {% if currentPage < maxPage %}
-            <a href="{{ path('serie_list', {'page' : currentPage + 1}) }}">Next Page</a>
+            {% if currentPage == 1 %}
+                <div></div>
+            {% endif %}
+            <a class="link_button" href="{{ path('serie_list', {'page' : currentPage + 1}) }}">Next Page</a>
         {% endif %}
     </div>
     <section class="series-list">
         {% for serie in series %}
             <article>
-                <a href="{{ path('serie_detail', {'id' : serie.id}) }}" title="View Serie's detail">
-                    <img src="{{ asset('img/posters/series/' ~ serie.poster) }}" alt="{{ serie.name }}">
+                <a href="{{ path('serie_detail', {'id' : serie.id}) }}" title="{{ serie.name }} | {{ serie.seasons|length }} seasons">
+                    <img src="{{ asset('img/posters/series/' ~ serie.poster) }}" alt="{{ serie.name }} | {{ serie.seasons|length }} seasons">
                 </a>
             </article>
         {% else %}

@@ -3,7 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\SerieRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=SerieRepository::class)
@@ -26,21 +29,45 @@ class Serie
     }
 
     /**
+     * @Assert\NotBlank(message="Please provide a name for the serie !")
+     * @Assert\Length(
+     *     min=2,
+     *     max=255,
+     *     minMessage="Minimum 2 characters please !",
+     *     maxMessage="Maximum 255 characters please !"
+     * )
+     *
      * @ORM\Column(type="string", length=255)
      */
     private $name;
 
     /**
+     *
+     * @Assert\Length(
+     *     min=2,
+     *     max=3000,
+     *     minMessage="Minimum 2 characters please !",
+     *     maxMessage="Maximum 3000 characters please !"
+     * )
+     *
      * @ORM\Column(type="text", nullable=true)
      */
     private $overview;
 
     /**
+     * @Assert\Choice(choices={"cancelled", "returning", "ended"})
+     *
      * @ORM\Column(type="string", length=50)
      */
     private $status;
 
     /**
+     *
+     *  @Assert\Range(
+     *     min="0",
+     *     max="10",
+     *     notInRangeMessage="Vote must be between 0 and 10"
+     * )
      * @ORM\Column(type="decimal", precision=3, scale=1)
      */
     private $vote;
@@ -61,6 +88,9 @@ class Serie
     private $firstAirDate;
 
     /**
+     * @Assert\Type("DateTimeInterface")
+     * @Assert\GreaterThan(propertyPath="firstAirDate", message="Last Air Date must be !!!")
+     *
      * @ORM\Column(type="date")
      */
     private $lastAirDate;
@@ -89,6 +119,21 @@ class Serie
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $dateModified;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Season::class, mappedBy="serie", cascade={"remove", "persist"})
+     */
+    private $seasons;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $nbLike;
+
+    public function __construct()
+    {
+        $this->seasons = new ArrayCollection();
+    }
 
     public function getName(): ?string
     {
@@ -242,6 +287,48 @@ class Serie
     public function setDateModified(?\DateTimeInterface $dateModified): self
     {
         $this->dateModified = $dateModified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Season[]
+     */
+    public function getSeasons(): Collection
+    {
+        return $this->seasons;
+    }
+
+    public function addSeason(Season $season): self
+    {
+        if (!$this->seasons->contains($season)) {
+            $this->seasons[] = $season;
+            $season->setSerie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSeason(Season $season): self
+    {
+        if ($this->seasons->removeElement($season)) {
+            // set the owning side to null (unless already changed)
+            if ($season->getSerie() === $this) {
+                $season->setSerie(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getNbLike(): ?int
+    {
+        return $this->nbLike;
+    }
+
+    public function setNbLike(int $nbLike): self
+    {
+        $this->nbLike = $nbLike;
 
         return $this;
     }

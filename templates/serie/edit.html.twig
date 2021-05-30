@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ parent() }} | Edit {% endblock %}
+
+{% block body %}
+
+    <h2>Edit a serie !!</h2>
+
+    <div>
+        {{ form_start(serieForm) }}
+        {{ form_widget(serieForm) }}
+        <button>Edit a serie</button>
+        {{ form_end(serieForm) }}
+    </div>
+{% endblock %}
+
+{% block extrastyles %}
+    <style>
+        body {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)),
+            url("{{ asset('img/backdrops/' ~ serie.backdrop) }}");
+        }
+    </style>
+{% endblock %}
+
